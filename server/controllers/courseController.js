@@ -1,17 +1,24 @@
 const db = require('../config/db');
 
 exports.createCourse = (req, res) => {
-  const { course_name, description, instructor_email, category_name } = req.body;
+  const { course_name, description, instructor_email, category_name, thumbnail } = req.body;
 
-  db.query(
-    'INSERT INTO courses (course_name, description, instructor_email, category_name) VALUES (?, ?, ?, ?)',
-    [course_name, description, instructor_email, category_name],
-    (err, result) => {
-      if (err) return res.status(500).json({ error: err.message });
-      res.status(201).json({ message: 'Course created successfully', course_id: result.insertId });
-    }
-  );
+  let query = 'INSERT INTO courses (course_name, description, instructor_email, category_name';
+  let values = [course_name, description, instructor_email, category_name];
+
+  if (thumbnail) {
+    query += ', thumbnail) VALUES (?, ?, ?, ?, ?)';
+    values.push(thumbnail);
+  } else {
+    query += ') VALUES (?, ?, ?, ?)';
+  }
+
+  db.query(query, values, (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(201).json({ message: 'Course created successfully', course_id: result.insertId });
+  });
 };
+
 
 exports.getCourses = (req, res) => {
   db.query('SELECT * FROM courses', (err, results) => {

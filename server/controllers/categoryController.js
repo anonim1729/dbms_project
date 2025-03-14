@@ -21,8 +21,15 @@ exports.getCategories = (req, res) => {
 };
 
 exports.deleteCategory = (req, res) => {
-  db.query('DELETE FROM categories WHERE category_name = ?', [req.params.category_name], (err) => {
+  const { category_name } = req.body;
+
+  if (!category_name) {
+    return res.status(400).json({ error: 'Missing category_name' });
+  }
+
+  db.query('DELETE FROM categories WHERE category_name = ?', [category_name], (err, result) => {
     if (err) return res.status(500).json({ error: err.message });
+    if (result.affectedRows === 0) return res.status(404).json({ error: 'Category not found' });
     res.json({ message: 'Category deleted successfully' });
   });
 };

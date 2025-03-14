@@ -1,55 +1,117 @@
-import { useState } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { Menu, X } from "lucide-react";
+import { AuthContext } from "../context/AuthContext";
 
 const Navbar = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isNavOpen, setNavOpen] = useState(false);
+  const { user, logout } = useContext(AuthContext);
+  const dropdownRef = useRef(null); // Reference for dropdown
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    }
+
+    if (isDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   return (
-    <nav className="bg-indigo-600 border-gray-200 dark:bg-indigo-900 relative">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-          <img src="https://flowbite.com/docs/images/logo.svg" className="h-8" alt="Flowbite Logo" />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">Wisdomize</span>
+    <nav className="bg-gray-900 text-white shadow-md">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-2">
+          <img src="https://flowbite.com/docs/images/logo.svg" alt="Logo" className="h-8" />
+          <span className="text-2xl font-bold">Wisdomize</span>
         </Link>
-        <div className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse relative">
-          <button
-            type="button"
-            className="flex text-sm bg-indigo-800 rounded-full md:me-0 focus:ring-4 focus:ring-indigo-300 dark:focus:ring-indigo-600"
-            onClick={() => setDropdownOpen(!isDropdownOpen)}
-          >
-            <span className="sr-only">Open user menu</span>
-            <img className="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-3.jpg" alt="user" />
-          </button>
-          {isDropdownOpen && (
-            <div className="absolute top-10 -right-8 lg:-right-18 mt-2 w-48 px-4 py-3 bg-white rounded-lg shadow-lg dark:bg-indigo-700 z-50 text-center">
-              <span className="block text-sm text-gray-900 dark:text-white">Bonnie Green</span>
-              <span className="block text-sm text-gray-500 truncate dark:text-gray-400">name@wisdomize.com</span>
-              <ul className="py-2 text-left">
-                <li><Link to="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 dark:text-gray-200 dark:hover:bg-indigo-600 dark:hover:text-white">Dashboard</Link></li>
-                <li><Link to="/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 dark:text-gray-200 dark:hover:bg-indigo-600 dark:hover:text-white">Settings</Link></li>
-                <li><Link to="/earnings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 dark:text-gray-200 dark:hover:bg-indigo-600 dark:hover:text-white">Earnings</Link></li>
-                <li><Link to="/logout" className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 dark:text-gray-200 dark:hover:bg-indigo-600 dark:hover:text-white">Sign out</Link></li>
-              </ul>
+
+        {/* Desktop Navigation */}
+        <ul className="hidden md:flex gap-6 text-lg">
+          {["Home", "Courses", "Instructors", "Contact"].map((item) => (
+            <li key={item}>
+              <Link to={`/${item.toLowerCase()}`} className="hover:text-indigo-400 transition">
+                {item}
+              </Link>
+            </li>
+          ))}
+        </ul>
+
+        {/* Auth Section */}
+        <div className="flex items-center gap-4">
+          {user ? (
+            <div className="relative" ref={dropdownRef}>
+              <button onClick={() => setDropdownOpen(!isDropdownOpen)} className="flex items-center gap-2 p-2 rounded-full bg-indigo-700 hover:bg-indigo-600 transition">
+                <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white font-semibold">
+                  {user.f_name.charAt(0).toUpperCase()}
+                </div>
+              </button>
+
+              {isDropdownOpen && (
+                <div className="absolute right-0 mt-3 w-48 bg-white text-gray-900 rounded-lg shadow-lg overflow-hidden z-50">
+                  <div className="px-4 py-3 border-b">
+                    <p className="font-semibold">{user.f_name} {user.l_name}</p>
+                    <p className="text-sm text-gray-500">{user.email}</p>
+                  </div>
+                  <ul>
+                    <li><Link to="/dashboard" className="block px-4 py-2 hover:bg-gray-200">Dashboard</Link></li>
+                    <li><Link to="/settings" className="block px-4 py-2 hover:bg-gray-200">Settings</Link></li>
+                    <li>
+                      <button onClick={logout} className="block w-full text-left px-4 py-2 hover:bg-red-500 hover:text-white">
+                        Sign Out
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="hidden md:flex gap-4">
+              <Link to="/login" className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg">Login</Link>
+              <Link to="/register" className="px-4 py-2 bg-green-600 hover:bg-green-500 rounded-lg">Register</Link>
             </div>
           )}
-          <button onClick={() => setNavOpen(!isNavOpen)} className="md:hidden p-2 w-10 h-10 text-white rounded-lg hover:bg-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:text-gray-400 dark:hover:bg-indigo-700 dark:focus:ring-indigo-600">
-            <span className="sr-only">Open main menu</span>
-            <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h15M1 7h15M1 13h15" />
-            </svg>
+
+          {/* Mobile Menu Button */}
+          <button onClick={() => setNavOpen(!isNavOpen)} className="md:hidden p-2">
+            {isNavOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
           </button>
         </div>
-        <div className={`${isNavOpen ? "absolute top-full right-0 bg-indigo-600 shadow-lg z-50 p-4 rounded-lg" : "hidden"} md:flex md:w-auto md:order-1`}>          
-          <ul className="flex flex-col md:flex-row font-medium md:space-x-8 text-white">
-            {['Home', 'Courses', 'Instructors', 'Pricing', 'Contact'].map((item) => (
-              <li key={item} className="py-2 px-3 text-center">
-                <Link to={`/${item.toLowerCase()}`} className="hover:text-indigo-300">{item}</Link>
+      </div>
+
+      {/* Mobile Navigation */}
+      {isNavOpen && (
+        <div className="md:hidden bg-gray-800 text-white">
+          <ul className="flex flex-col gap-3 p-4">
+            {["Home", "Courses", "Contact"].map((item) => (
+              <li key={item}>
+                <Link to={`/${item.toLowerCase()}`} className="block py-2 text-center hover:bg-indigo-600 transition">
+                  {item}
+                </Link>
               </li>
             ))}
           </ul>
+          {!user ? (
+            <div className="flex flex-col items-center gap-3 p-4">
+              <Link to="/login" className="w-full text-center py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg">Login</Link>
+              <Link to="/register" className="w-full text-center py-2 bg-green-600 hover:bg-green-500 rounded-lg">Register</Link>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-3 p-4">
+              <button onClick={logout} className="w-full text-center py-2 bg-red-600 hover:bg-red-500 rounded-lg">Sign Out</button>
+            </div>
+          )}
         </div>
-      </div>
+      )}
     </nav>
   );
 };

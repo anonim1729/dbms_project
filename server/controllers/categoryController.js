@@ -13,8 +13,20 @@ exports.createCategory = (req, res) => {
   );
 };
 
+// server/controllers/categoryController.js
 exports.getCategories = (req, res) => {
-  db.query('SELECT * FROM categories', (err, results) => {
+  const query = `
+    SELECT 
+      c.category_name, 
+      c.created_at,
+      COUNT(co.course_id) AS course_count
+    FROM categories c
+    LEFT JOIN courses co ON c.category_name = co.category_name
+    GROUP BY c.category_name
+    ORDER BY c.created_at DESC
+  `;
+
+  db.query(query, (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
   });

@@ -40,3 +40,35 @@ exports.deleteCourse = (req, res) => {
     res.json({ message: 'Course deleted successfully' });
   });
 };
+
+
+exports.getInstructorCourses = (req, res) => {
+  const { email } = req.params;
+  const query = `
+  SELECT 
+    c.course_id, 
+    c.course_name, 
+    c.description, 
+    c.created_at, 
+    c.category_name, 
+    c.thumbnail, 
+    COUNT(e.email) AS enrollment_count,
+    cat.category_name
+  FROM 
+    courses c
+  LEFT JOIN 
+    enrollment e ON c.course_id = e.course_id
+  JOIN 
+    categories cat ON c.category_name = cat.category_name
+  WHERE 
+    c.instructor_email = ?
+  GROUP BY 
+    c.course_id
+  ORDER BY 
+    c.created_at DESC
+`;
+  db.query(query, [email], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+};

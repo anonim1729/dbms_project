@@ -1,1 +1,29 @@
 @import "tailwindcss";
+
+
+/* Custom Carousel Overrides */
+.carousel .control-dots {
+    position: relative;
+    margin-top: 1rem;
+  }
+  
+  .carousel .control-dots .dot {
+    background: #cbd5e1;
+    box-shadow: none;
+    width: 12px;
+    height: 12px;
+    margin: 0 4px;
+  }
+  
+  .carousel .control-dots .dot.selected {
+    background: #3b82f6;
+  }
+  
+  .carousel .slide {
+    background: transparent;
+    padding: 0 10px;
+  }
+  
+  .carousel.carousel-slider {
+    overflow: visible;
+  }

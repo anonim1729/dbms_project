@@ -15,6 +15,8 @@ import AddVideos from "./pages/AddVideos.jsx"
 import Unauthorized from "./pages/Unauthorized";
 import PrivateRoute from "./routes/PrivateRoute";
 import CourseManagementLayout from "./layouts/CourseManagementLayout"
+import InstructorsPage from "./pages/Instructors.jsx";
+import InstructorProfile from "./pages/InstructorProfile.jsx";
 
 export default function App() {
   return (
@@ -26,6 +28,8 @@ export default function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/Instructors" element={<InstructorsPage/>} />
+        <Route path="/instructors/:email" element={<InstructorProfile />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
 
         {/* Private Routes - Authenticated Users */}

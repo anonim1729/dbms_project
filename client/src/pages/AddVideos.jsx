@@ -68,7 +68,7 @@ const AddVideos = () => {
 
       // After all videos are uploaded, reset the form
       setNewVideos([{ title: '', url: '', description: '', duration: '' }]);
-      navigate(`/course-management}`);
+      navigate(`/course-management`);
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to save videos');
     } finally {

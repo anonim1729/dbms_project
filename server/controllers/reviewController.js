@@ -24,6 +24,16 @@ exports.getReviewsForCourse = (req, res) => {
   );
 };
 
+exports.getReviews = (req, res) => {
+  db.query(
+    'SELECT * FROM ratings_reviews LIMIT 6',
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json(results);
+    }
+  );
+};
+
 // Update Review
 exports.updateReview = (req, res) => {
   const { course_id, user_email, rating, review } = req.body;
@@ -60,4 +70,23 @@ exports.deleteReview = (req, res) => {
       res.json({ message: 'Review deleted successfully' });
     }
   );
+};
+
+exports.getInstructorRatings = (req, res) => {
+  const query = `
+    SELECT 
+      COUNT(DISTINCT c.course_id) AS total_courses,
+      COUNT(DISTINCT e.email) AS total_students,
+      AVG(r.rating) AS average_rating,
+      COUNT(r.review) AS total_reviews
+    FROM courses c
+    LEFT JOIN enrollment e ON c.course_id = e.course_id
+    LEFT JOIN ratings_reviews r ON c.course_id = r.course_id
+    WHERE c.instructor_email = ?
+  `;
+  console.log('here......');
+  db.query(query, [req.params.email], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results[0] || {}); // Return empty object if no data found
+  });
 };

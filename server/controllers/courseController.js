@@ -45,30 +45,21 @@ exports.deleteCourse = (req, res) => {
 exports.getInstructorCourses = (req, res) => {
   const { email } = req.params;
   const query = `
-  SELECT 
-    c.course_id, 
-    c.course_name, 
-    c.description, 
-    c.created_at, 
-    c.category_name, 
-    c.thumbnail, 
-    COUNT(e.email) AS enrollment_count,
-    cat.category_name
-  FROM 
-    courses c
-  LEFT JOIN 
-    enrollment e ON c.course_id = e.course_id
-  JOIN 
-    categories cat ON c.category_name = cat.category_name
-  WHERE 
-    c.instructor_email = ?
-  GROUP BY 
-    c.course_id
-  ORDER BY 
-    c.created_at DESC
-`;
+    SELECT 
+      c.*,
+      COUNT(e.email) AS enrollment_count,
+      AVG(r.rating) AS average_rating,
+      SUM(cv.duration) AS total_duration
+    FROM courses c
+    LEFT JOIN enrollment e ON c.course_id = e.course_id
+    LEFT JOIN ratings_reviews r ON c.course_id = r.course_id
+    LEFT JOIN course_videos cv ON c.course_id = cv.course_id
+    WHERE c.instructor_email = ?
+    GROUP BY c.course_id
+  `;
   db.query(query, [email], (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
   });
 };
+

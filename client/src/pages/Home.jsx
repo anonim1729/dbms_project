@@ -4,6 +4,7 @@ import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import axios from 'axios';
 import hero from "../assets/here.svg"
+import { MdGolfCourse } from "react-icons/md";
 import background from "../assets/background.avif"
 import '../index.css';
 
@@ -91,7 +92,7 @@ const Home = () => {
 
               {/* Floating Animation Container */}
               <div className="hidden lg:block relative">
-                <div  className="animate-float">
+                <div className="animate-float">
                   <img
                     src={hero}
                     alt="Learning Illustration"
@@ -152,8 +153,8 @@ const Home = () => {
                     <h3 className="text-xl font-semibold mb-2">{course.course_name}</h3>
                     <p className="text-gray-600 mb-4 line-clamp-2 flex-grow">{course.description}</p>
                     <div className="flex justify-between items-center mt-auto">
-                      <span className="text-blue-600 font-medium">
-                        {course.enrollment_count} enrolled
+                      <span className="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-[10px] border border-blue-200">
+                        {course.category_name}
                       </span>
                       <Link
                         to={`/courses/${course.course_id}`}
@@ -252,7 +253,7 @@ const Home = () => {
                 </div>
               </div>
               <p className="text-gray-300">
-                responsible for course management system,
+                Responsible for course management system,
                 user authentication, and API integrations. Contributed to both
                 frontend and backend development.
               </p>
@@ -270,7 +271,7 @@ const Home = () => {
                 </div>
               </div>
               <p className="text-gray-300">
-                responsible for course management system,
+                Responsible for course management system,
                 user authentication, and API integrations. Contributed to both
                 frontend and backend development.
               </p>

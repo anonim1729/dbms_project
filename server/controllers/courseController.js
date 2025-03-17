@@ -21,7 +21,7 @@ exports.createCourse = (req, res) => {
 
 
 exports.getCourses = (req, res) => {
-  db.query('SELECT * FROM courses', (err, results) => {
+  db.query('SELECT * FROM courses limit 6', (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
   });

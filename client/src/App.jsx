@@ -9,12 +9,15 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Categories from "./pages/Categories";
 import CreateCategory from "./pages/CreateCategory";
-import CourseManagement from "./pages/CourseManagement.jsx"
-import CreateCourse from "./pages/CreateCourse.jsx"
-import AddVideos from "./pages/AddVideos.jsx"
+import CourseManagement from "./pages/CourseManagement.jsx";
+import CreateCourse from "./pages/CreateCourse.jsx";
+import AddVideos from "./pages/AddVideos.jsx";
 import Unauthorized from "./pages/Unauthorized";
 import PrivateRoute from "./routes/PrivateRoute";
-import CourseManagementLayout from "./layouts/CourseManagementLayout"
+import CourseManagementLayout from "./layouts/CourseManagementLayout";
+import Courses from "./pages/Courses.jsx";
+import Course from "./pages/Course.jsx";
+import Layout from "./layouts/Layout.jsx";
 
 export default function App() {
   return (
@@ -29,31 +32,44 @@ export default function App() {
         <Route path="/unauthorized" element={<Unauthorized />} />
 
         {/* Private Routes - Authenticated Users */}
-        <Route path="/dashboard" element={
-          <PrivateRoute>
-            <Dashboard />
-          </PrivateRoute>
-        } />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
 
         {/* Admin-only Routes */}
-        <Route path="/categories" element={
-          <PrivateRoute allowedRoles={['admin']}>
-            <Categories />
-          </PrivateRoute>
-        } />
+        <Route
+          path="/categories"
+          element={
+            <PrivateRoute allowedRoles={["admin"]}>
+              <Categories />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/categories/create"
+          element={
+            <PrivateRoute allowedRoles={["admin"]}>
+              <CreateCategory />
+            </PrivateRoute>
+          }
+        />
 
+        {/* Courses Routes */}
+        <Route path="/courses" element={<Layout />}>
+          <Route index element={<Courses />} />
+          <Route path=":courseid" element={<Course />} /> {/* Fixed dynamic route */}
+        </Route>
 
-        <Route path="/categories/create" element={
-          <PrivateRoute allowedRoles={['admin']}>
-            <CreateCategory />
-          </PrivateRoute>
-        } />
-
-
+        {/* Course Management Routes for Instructors */}
         <Route
           path="/course-management"
           element={
-            <PrivateRoute allowedRoles={['instructor']}>
+            <PrivateRoute allowedRoles={["instructor"]}>
               <CourseManagementLayout />
             </PrivateRoute>
           }
@@ -62,7 +78,6 @@ export default function App() {
           <Route path="create_course" element={<CreateCourse />} />
           <Route path="create_course/add_videos" element={<AddVideos />} />
         </Route>
-        {/* Add other protected routes here */}
       </Routes>
       <Footer />
     </AuthProvider>

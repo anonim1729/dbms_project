@@ -119,7 +119,10 @@ const InstructorProfile = () => {
                     </div>
                     <div className="flex items-center gap-1">
                       <Star size={16} className="text-yellow-400" />
-                      <span>{course.average_rating?.toFixed(1) || 'N/A'}</span>
+                      <span>
+  {course.average_rating ? Number(course.average_rating).toFixed(1) : "N/A"}
+</span>
+
                     </div>
                   </div>
                 </div>
@@ -147,7 +150,7 @@ const InstructorProfile = () => {
             </div>
             <div className="text-center p-4 bg-yellow-50 rounded-lg">
               <div className="text-2xl font-bold text-yellow-600">
-                {stats.average_rating?.toFixed(1) || 'N/A'}
+              {stats.average_rating ? Number(stats.average_rating).toFixed(1) : 'N/A'}
               </div>
               <div className="text-gray-600">Avg Rating</div>
             </div>

@@ -122,7 +122,13 @@ const CourseManagement = () => {
           {filteredCourses.map(course => (
             <div
               key={course.course_id}
-              className="bg-white rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 ease-in-out transform border-2 border-gray-200"
+              onClick={(e) => {
+                e.stopPropagation(); // Prevents card click event
+                navigate(`/courses/${course.course_id}`, {
+                  state: { courseId: course.course_id }
+                });
+              }}
+              className="cursor-pointer bg-white rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 ease-in-out transform border-2 border-gray-200"
             >
               <img
                 src={course.thumbnail || 'https://via.placeholder.com/300x150'}

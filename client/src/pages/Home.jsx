@@ -23,6 +23,7 @@ const Home = () => {
         const reviewsRes = await axios.get('http://localhost:5000/api/reviews', {
           headers: { Authorization: `Bearer ${token}` }
         });
+        console.log(reviewsRes.data);
         setReviews(reviewsRes.data.slice(0, 6));
 
       } catch (error) {

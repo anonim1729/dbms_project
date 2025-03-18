@@ -14,16 +14,12 @@ import CreateCourse from "./pages/CreateCourse.jsx";
 import AddVideos from "./pages/AddVideos.jsx";
 import Unauthorized from "./pages/Unauthorized";
 import PrivateRoute from "./routes/PrivateRoute";
-<<<<<<< HEAD
-import CourseManagementLayout from "./layouts/CourseManagementLayout";
 import Courses from "./pages/Courses.jsx";
 import Course from "./pages/Course.jsx";
 import Layout from "./layouts/Layout.jsx";
-=======
 import CourseManagementLayout from "./layouts/CourseManagementLayout"
 import InstructorsPage from "./pages/Instructors.jsx";
 import InstructorProfile from "./pages/InstructorProfile.jsx";
->>>>>>> nandeesh
 
 export default function App() {
   return (

@@ -18,7 +18,7 @@ const CourseManagement = () => {
       try {
         const token = localStorage.getItem('token');
         console.log("Instructor email:", user.email);
-        const response = await axios.get(`http://localhost:5000/api/courses/instructor/demo@123`, {
+        const response = await axios.get(`http://localhost:5000/api/courses/instructor/${user.email}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

@@ -20,10 +20,10 @@ const Home = () => {
         });
         setTopCourses(coursesRes.data.slice(0, 5));
 
-        const reviewsRes = await axios.get('http://localhost:5000/api/reviews', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setReviews(reviewsRes.data.slice(0, 6));
+        // const reviewsRes = await axios.get('http://localhost:5000/api/reviews', {
+        //   headers: { Authorization: `Bearer ${token}` }
+        // });
+        // setReviews(reviewsRes.data.slice(0, 6));
 
       } catch (error) {
         console.error('Error fetching data:', error);

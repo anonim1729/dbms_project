@@ -8,16 +8,17 @@ const categoryRoutes = require('./routes/categoryRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const userRoutes = require('./routes/userRoutes');
 const courseVideosRoutes = require('./routes/courseVideosRoutes');
+const authMiddleware = require('./middlewares/authMiddleware');
 
 
 const app = express();
 app.use(express.json());
 app.use(cors());
-
+yufyy
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/course-videos', courseVideosRoutes);
-app.use('/api/enrollment', enrollmentRoutes);
+app.use('/api/enrollment',authMiddleware, enrollmentRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/users', userRoutes);

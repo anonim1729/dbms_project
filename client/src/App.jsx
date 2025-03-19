@@ -18,6 +18,7 @@ import CourseManagementLayout from "./layouts/CourseManagementLayout";
 import Courses from "./pages/Courses.jsx";
 import Course from "./pages/Course.jsx";
 import Layout from "./layouts/Layout.jsx";
+import MyLearning from "./pages/MyLearning.jsx";
 
 export default function App() {
   return (
@@ -65,6 +66,10 @@ export default function App() {
           <Route path=":courseid" element={<Course />} /> {/* Fixed dynamic route */}
         </Route>
 
+        {/*My Learning*/}
+        <Route path='/mylearning' element={<Layout/>}>
+        <Route index element={<MyLearning/>}/>
+        </Route>
         {/* Course Management Routes for Instructors */}
         <Route
           path="/course-management"

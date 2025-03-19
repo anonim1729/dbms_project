@@ -32,7 +32,8 @@ const Navbar = () => {
     "Courses",
     "Instructors",
     ...(user?.account_type === 'admin' ? ['Categories'] : []),
-    ...(user?.account_type === 'instructor' ? ['Course Management'] : [])
+    ...(user?.account_type === 'instructor' ? ['Course Management'] : []),
+    ...(user?.account_type==='student'?['mylearning']:[])
   ];
 
   return (

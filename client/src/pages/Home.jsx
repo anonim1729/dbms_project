@@ -77,7 +77,7 @@ const Home = () => {
                     Explore Courses
                   </Link>
                   <Link
-                    to="/my-learning"
+                    to="/mylearning"
                     className="border-2 border-white px-8 py-4 rounded-xl hover:bg-white/10 transition-all text-lg font-semibold text-white flex items-center justify-center gap-2"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -17,13 +17,11 @@ import PrivateRoute from "./routes/PrivateRoute";
 import Courses from "./pages/Courses.jsx";
 import Course from "./pages/Course.jsx";
 import Layout from "./layouts/Layout.jsx";
-<<<<<<< HEAD
 import MyLearning from "./pages/MyLearning.jsx";
-=======
 import CourseManagementLayout from "./layouts/CourseManagementLayout"
 import InstructorsPage from "./pages/Instructors.jsx";
 import InstructorProfile from "./pages/InstructorProfile.jsx";
->>>>>>> a09879af7309f7e969f40a81957aabcdec6e57e3
+import EnrolledCourse from "./pages/EnrolledCourse.jsx";
 
 export default function App() {
   return (
@@ -76,6 +74,7 @@ export default function App() {
         {/*My Learning*/}
         <Route path='/mylearning' element={<Layout/>}>
         <Route index element={<MyLearning/>}/>
+        <Route path=":enrolledCourseId" element={<EnrolledCourse />} />
         </Route>
         {/* Course Management Routes for Instructors */}
         <Route

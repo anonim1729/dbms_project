@@ -21,11 +21,32 @@ exports.createCourse = (req, res) => {
 
 
 exports.getCourses = (req, res) => {
-  db.query('SELECT * FROM courses limit 6', (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
+  const userEmail = req.body.email; // Get user email from request body
+  console.log(userEmail);
+  const query = `
+    SELECT 
+      c.*, 
+      COUNT(e.course_id) AS enrolled,
+      IF(EXISTS (
+        SELECT 1 FROM enrollment e2 
+        WHERE e2.email = ? AND e2.course_id = c.course_id
+      ), 1, 0) AS isEnrolled
+    FROM courses c
+    LEFT JOIN enrollment e ON c.course_id = e.course_id
+    GROUP BY c.course_id;
+  `;
+
+  db.query(query, [userEmail], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: err.message });
+    }
     res.json(results);
   });
 };
+
+
+
 
 exports.getCourseById = (req, res) => {
   db.query('SELECT * FROM courses WHERE course_id = ?', [req.params.id], (err, result) => {

@@ -19,3 +19,41 @@ exports.updateUserProfile = (req, res) => {
     }
   );
 };
+
+exports.getInstructors = (req, res) => {
+  const query = `
+    SELECT 
+      u.email,
+      u.f_name,
+      u.l_name,
+      COUNT(c.course_id) AS course_count
+    FROM users u
+    LEFT JOIN courses c ON u.email = c.instructor_email
+    WHERE u.account_type = 'instructor'
+    GROUP BY u.email
+    ORDER BY course_count DESC
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) return res.status(500).json({ error: "error from controller" });
+    res.json(results);
+  });
+};
+
+exports.getInstructorByEmail = (req, res) => {
+  const query = `
+    SELECT 
+      u.*,
+      COUNT(c.course_id) AS course_count
+    FROM users u
+    LEFT JOIN courses c ON u.email = c.instructor_email
+    WHERE u.email = ? AND u.account_type = 'instructor'
+    GROUP BY u.email
+  `;
+
+  db.query(query, [req.params.email], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (results.length === 0) return res.status(404).json({ error: "Instructor not found" });
+    res.json(results[0]);
+  });
+};

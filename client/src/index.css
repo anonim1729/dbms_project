@@ -27,3 +27,25 @@
   .carousel.carousel-slider {
     overflow: visible;
   }
+
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .carousel-container .slider {
+    display: flex;
+    transform: scaleX(-1); /* Reverse the flow direction */
+  }
+  
+  .carousel-container .slide {
+    transform: scaleX(-1); /* Reverse the content back to normal */
+    min-width: 50%; /* Adjust based on your design */
+    padding: 0 10px; /* Adjust spacing between items */
+    box-sizing: border-box;
+  }

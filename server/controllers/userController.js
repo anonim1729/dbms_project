@@ -20,7 +20,7 @@ exports.updateUserProfile = (req, res) => {
   );
 };
 
-exports.getInstructors = (req, res) => {
+exports.getInstructors = (req, res) => {        //getting all the mails of email with count(courseid)
   const query = `
     SELECT 
       u.email,
@@ -40,7 +40,7 @@ exports.getInstructors = (req, res) => {
   });
 };
 
-exports.getInstructorByEmail = (req, res) => {
+exports.getInstructorByEmail = (req, res) => {            //getting instructor details
   const query = `
     SELECT 
       u.*,

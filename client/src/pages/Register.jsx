@@ -28,7 +28,7 @@ export default function Register() {
       await axios.post("http://localhost:5000/api/auth/register", formData);
       setSuccess("Registration successful! You can now login.");
       setError("");
-      setTimeout(() => navigate("/"), 2000); // Redirect to home after 2 seconds
+      setTimeout(() => navigate("/login"), 2000); // Redirect to home after 2 seconds
     } catch (err) {
       setError(err.response?.data?.error || "Registration failed");
     }

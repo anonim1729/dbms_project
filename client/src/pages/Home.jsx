@@ -17,16 +17,16 @@ const Home = () => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
+        
+        const reviewsRes = await axios.get('http://localhost:5000/api/reviews', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setReviews(reviewsRes.data.slice(0, 6));
 
         const coursesRes = await axios.get('http://localhost:5000/api/courses', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setTopCourses(coursesRes.data.slice(0, 5));
-
-        // const reviewsRes = await axios.get('http://localhost:5000/api/reviews', {
-        //   headers: { Authorization: `Bearer ${token}` }
-        // });
-        // setReviews(reviewsRes.data.slice(0, 6));
 
       } catch (error) {
         console.error('Error fetching data:', error);

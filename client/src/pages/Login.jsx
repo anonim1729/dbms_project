@@ -1,11 +1,13 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function Login() {
   const { login } = useContext(AuthContext);
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

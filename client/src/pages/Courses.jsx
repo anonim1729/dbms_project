@@ -1,68 +1,146 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useCourse } from '../context/CoursesContext';
+import { Star, Search, BookOpen, Clock } from 'lucide-react';
 
 const Courses = () => {
-  const {courses,setCourses}=useCourse();
+  const { courses, setCourses } = useCourse();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [categories, setCategories] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCourses = async () => {
+    const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5000/api/courses', {
+        
+        // Fetch courses with ratings
+        const coursesResponse = await axios.get('http://localhost:5000/api/courses', {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setCourses(response.data);
+        setCourses(coursesResponse.data);
+
+        // Fetch categories
+        const categoriesResponse = await axios.get('http://localhost:5000/api/categories', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setCategories(categoriesResponse.data);
+
       } catch (err) {
-        console.log(err)
-        setError('Failed to fetch courses');
+        setError('Failed to fetch data');
       } finally {
         setLoading(false);
       }
     };
-    fetchCourses();
+    fetchData();
   }, []);
 
-  console.log(courses);
+  const filteredCourses = courses.filter(course => {
+    const matchesSearch = course.course_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         course.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || 
+                          course.category_name === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  const renderRatingStars = (rating) => {
+    return [...Array(5)].map((_, index) => (
+      <Star
+        key={index}
+        size={18}
+        className={index < Math.round(rating) ? 'text-yellow-500 fill-current' : 'text-gray-300'}
+      />
+    ));
+  };
 
   if (loading) return <div className="text-center py-8 text-xl">Loading...</div>;
   if (error) return <div className="text-center py-8 text-red-500">{error}</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-6">
+    <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-4xl font-bold text-center mb-8">Available Courses</h2>
+        
+        {/* Search and Filters */}
+        <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search courses..."
+              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <Search className="absolute left-4 top-3.5 text-gray-500" size={20} />
+          </div>
+          
+          <select
+            className="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            <option value="all">All Categories</option>
+            {categories.map(category => (
+              <option key={category.category_name} value={category.category_name}>
+                {category.category_name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Courses Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {courses.map((course) => (
+          {filteredCourses.map((course) => (
             <div 
-            courseid={course.course_id}
-            key={course.course_id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-              <img 
-                src={course?.thumbnail || "default-thumbnail.jpg"} 
-                alt={course?.course_name || "Course Thumbnail"} 
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4">
-                <h3 className="text-xl font-semibold mb-2">{course?.course_name || "Untitled Course"}</h3>
-                <p className="text-gray-600 line-clamp-2 mb-4">{course?.description || "No description available."}</p>
-                <div className="flex justify-between items-center">
-                  <span className="text-blue-600 font-medium">
-                    {course?.enrolled ?? 0} enrolled
-                  </span>
-                  <Link 
-                    to={`/courses/${course?.course_id || course?.id}`} 
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-                  >
-                    View Course
-                  </Link>
+              key={course.course_id}
+              className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow p-6"
+            >
+              <div className="relative aspect-video mb-4 rounded-lg overflow-hidden">
+                <img
+                  src={course.thumbnail || "/course-placeholder.jpg"}
+                  alt={course.course_name}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute bottom-2 left-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                  {course.category_name}
                 </div>
               </div>
+
+              <h3 className="text-xl font-semibold mb-2">{course.course_name}</h3>
+              <p className="text-gray-600 text-sm line-clamp-2 mb-4">{course.description}</p>
+
+              <div className="flex items-center justify-between text-sm text-gray-600">
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
+                    {renderRatingStars(course.average_rating || 0)}
+                    <span className="ml-1">({course.enrolled_count || 0} enrolled)</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <BookOpen size={18} className="text-blue-500" />
+                  <span>{course.video_count} lessons</span>
+                </div>
+              </div>
+
+              <Link
+                to={`/courses/${course.course_id}`}
+                className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg flex items-center justify-center transition-colors"
+              >
+                View Course
+              </Link>
             </div>
           ))}
         </div>
+
+        {filteredCourses.length === 0 && (
+          <div className="text-center py-12 text-gray-500">
+            <p className="text-lg">No courses found matching your criteria</p>
+          </div>
+        )}
       </div>
     </div>
   );

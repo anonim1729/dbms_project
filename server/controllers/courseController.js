@@ -25,15 +25,16 @@ exports.getCourses = (req, res) => {
   console.log(userEmail);
   const query = `
     SELECT 
-      c.*, 
-      COUNT(e.course_id) AS enrolled,
-      IF(EXISTS (
-        SELECT 1 FROM enrollment e2 
-        WHERE e2.email = ? AND e2.course_id = c.course_id
-      ), 1, 0) AS isEnrolled
-    FROM courses c
-    LEFT JOIN enrollment e ON c.course_id = e.course_id
-    GROUP BY c.course_id;
+    c.*,
+    AVG(r.rating) AS average_rating,
+    COUNT(DISTINCT r.user_email) AS rating_count,
+    COUNT(DISTINCT cv.video_url) AS video_count,
+    COUNT(DISTINCT e.email) AS enrolled_count
+FROM courses c
+LEFT JOIN ratings_reviews r ON c.course_id = r.course_id
+LEFT JOIN course_videos cv ON c.course_id = cv.course_id
+LEFT JOIN enrollment e ON c.course_id = e.course_id
+GROUP BY c.course_id;
   `;
 
   db.query(query, [userEmail], (err, results) => {
@@ -49,8 +50,19 @@ exports.getCourses = (req, res) => {
 
 
 exports.getCourseById = (req, res) => {
-  db.query('SELECT * FROM courses WHERE course_id = ?', [req.params.id], (err, result) => {
-    if (err || result.length === 0) return res.status(404).json({ error: 'Course not found' });
+  const courseId = req.params.id;
+  db.query(`
+    SELECT 
+      c.*, 
+      (SELECT AVG(rating) FROM ratings_reviews WHERE course_id = c.course_id) AS average_rating,
+      (SELECT COUNT(*) FROM course_videos WHERE course_id = c.course_id) AS video_count,
+      (SELECT SUM(duration) FROM course_videos WHERE course_id = c.course_id) AS total_duration
+    FROM courses c
+    WHERE c.course_id = ?
+  `, [courseId], (err, result) => {
+    if (err || result.length === 0) {
+      return res.status(404).json({ error: 'Course not found' });
+    }
     res.json(result[0]);
   });
 };
@@ -66,18 +78,18 @@ exports.deleteCourse = (req, res) => {
 exports.getInstructorCourses = (req, res) => {
   const { email } = req.params;
   const query = `
-    SELECT 
-      c.*,
-      COUNT(e.email) AS enrollment_count,
-      AVG(r.rating) AS average_rating,
-      SUM(cv.duration) AS total_duration
-    FROM courses c
-    LEFT JOIN enrollment e ON c.course_id = e.course_id
-    LEFT JOIN ratings_reviews r ON c.course_id = r.course_id
-    LEFT JOIN course_videos cv ON c.course_id = cv.course_id
-    WHERE c.instructor_email = ?
-    GROUP BY c.course_id
-  `;
+   SELECT 
+    c.*, 
+    COUNT(DISTINCT e.email) AS enrollment_count,
+    AVG(r.rating) AS average_rating,
+    (SELECT SUM(duration) FROM course_videos WHERE course_id = c.course_id) AS total_duration
+FROM courses c
+LEFT JOIN enrollment e ON c.course_id = e.course_id
+LEFT JOIN ratings_reviews r ON c.course_id = r.course_id
+WHERE c.instructor_email = ?
+GROUP BY c.course_id;
+ `;
+ 
   db.query(query, [email], (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);

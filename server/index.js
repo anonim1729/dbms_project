@@ -15,7 +15,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use('/api/auth', authRoutes);
-app.use('/api/courses',authMiddleware, courseRoutes);
+app.use('/api/courses', courseRoutes);
 app.use('/api/course-videos', courseVideosRoutes);
 app.use('/api/enrollment',authMiddleware, enrollmentRoutes);
 app.use('/api/categories', categoryRoutes);

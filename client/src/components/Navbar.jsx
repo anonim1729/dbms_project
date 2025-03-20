@@ -31,9 +31,9 @@ const Navbar = () => {
     "Home",
     "Courses",
     "Instructors",
+    "myLearning",
     ...(user?.account_type === 'admin' ? ['Categories'] : []),
     ...(user?.account_type === 'instructor' ? ['Course Management'] : []),
-    ...(user?.account_type==='student'?['mylearning']:[])
   ];
 
   return (
@@ -84,7 +84,6 @@ const Navbar = () => {
                   </div>
                   <ul>
                     <li><Link to="/dashboard" className="block px-4 py-2 hover:bg-gray-200">Dashboard</Link></li>
-                    <li><Link to="/settings" className="block px-4 py-2 hover:bg-gray-200">Settings</Link></li>
                     <li>
                       <button 
                         onClick={logout} 

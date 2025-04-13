@@ -21,28 +21,16 @@ exports.createCourse = (req, res) => {
 
 
 exports.getCourses = (req, res) => {
-  const userEmail = req.body.email; // Get user email from request body
-  console.log(userEmail);
-  const query = `
-    SELECT 
-    c.*,
-    AVG(r.rating) AS average_rating,
-    COUNT(DISTINCT r.user_email) AS rating_count,
-    COUNT(DISTINCT cv.video_url) AS video_count,
-    COUNT(DISTINCT e.email) AS enrolled_count
-FROM courses c
-LEFT JOIN ratings_reviews r ON c.course_id = r.course_id
-LEFT JOIN course_videos cv ON c.course_id = cv.course_id
-LEFT JOIN enrollment e ON c.course_id = e.course_id
-GROUP BY c.course_id;
-  `;
+  const userEmail = req.body.email;
 
-  db.query(query, [userEmail], (err, results) => {
+  db.query('CALL get_courses_with_aggregates(?)', [userEmail], (err, results) => {
     if (err) {
-      console.error(err);
+      console.error('Database error:', err);
       return res.status(500).json({ error: err.message });
     }
-    res.json(results);
+
+    // Stored procedures return a 2D array; the result is in results[0]
+    res.json(results[0]);
   });
 };
 

@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Star, BookOpen, Clock } from "lucide-react";
 
 const MyLearning = () => {
   const { user } = useAuth();
+  const navi = useNavigate();
   const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!user?.email) return;
+    if (!user?.email) {
+      navi("/login");
+    };
     const token = localStorage.getItem('token');
     
     const fetchEnrolledCourses = async () => {

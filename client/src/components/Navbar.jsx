@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
+import logo from "../assets/react.svg"
 
 const Navbar = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -41,7 +42,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <img src="https://flowbite.com/docs/images/logo.svg" alt="Logo" className="h-8" />
+          <img src={logo} alt="Logo" className="h-8" />
           <span className="text-2xl font-bold">Wisdomize</span>
         </Link>
 
